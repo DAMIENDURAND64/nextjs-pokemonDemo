@@ -7,7 +7,24 @@ interface Params {
   id: string;
 }
 
-export async function getServerSideProps({ params }: { params: Params }) {
+export async function getStaticPaths() {
+  try {
+    const resp = await fetch(
+      `https://jherr-pokemon.s3.us-west-1.amazonaws.com/index.json`
+    );
+    const pokemon = await resp.json();
+    return {
+      paths: pokemon.map((pokemon: Pokemon) => ({
+        params: { id: pokemon.id.toString() },
+      })),
+      fallback: false,
+    };
+  } catch (error) {
+    return error;
+  }
+}
+
+export async function getStaticProps({ params }: { params: Params }) {
   try {
     const res = await fetch(
       `https://jherr-pokemon.s3.us-west-1.amazonaws.com/pokemon/${params.id}.json`

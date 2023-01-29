@@ -3,7 +3,7 @@ import Link from "next/link";
 import Image from "next/image";
 import { Pokemon } from "../utils/types";
 
-export async function getServerSideProps() {
+export async function getStaticProps() {
   try {
     const res = await fetch(
       "https://jherr-pokemon.s3.us-west-1.amazonaws.com/index.json"
