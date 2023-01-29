@@ -1,32 +1,28 @@
 import Image from "next/image";
 import Link from "next/link";
-import { useRouter } from "next/router";
 import React from "react";
-import { useEffect, useState } from "react";
 import { Pokemon } from "../../utils/types";
 
-function PokemonDetails() {
-  const {
-    query: { id },
-  } = useRouter();
+interface Params {
+  id: string;
+}
 
-  const [pokemon, setPokemon] = useState<Pokemon>();
-
-  useEffect(() => {
-    async function getPokemon() {
-      const res = await fetch(
-        `https://jherr-pokemon.s3.us-west-1.amazonaws.com/pokemon/${id}.json`
-      );
-      setPokemon(await res.json());
-    }
-    if (id) {
-      getPokemon();
-    }
-  }, [id]);
-
-  if (!pokemon) {
-    return null;
+export async function getServerSideProps({ params }: { params: Params }) {
+  try {
+    const res = await fetch(
+      `https://jherr-pokemon.s3.us-west-1.amazonaws.com/pokemon/${params.id}.json`
+    );
+    return {
+      props: {
+        pokemon: await res.json(),
+      },
+    };
+  } catch (error) {
+    return error;
   }
+}
+
+function PokemonDetails({ pokemon }: { pokemon: Pokemon }) {
   return (
     <div className="p-5">
       <Link href={"/"}>

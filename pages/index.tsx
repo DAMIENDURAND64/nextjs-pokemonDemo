@@ -1,24 +1,24 @@
 import Head from "next/head";
-import { Inter } from "@next/font/google";
-import { useEffect, useState } from "react";
 import Link from "next/link";
 import Image from "next/image";
 import { Pokemon } from "../utils/types";
 
-const inter = Inter({ subsets: ["latin"] });
+export async function getServerSideProps() {
+  try {
+    const res = await fetch(
+      "https://jherr-pokemon.s3.us-west-1.amazonaws.com/index.json"
+    );
+    return {
+      props: {
+        pokemon: await res.json(),
+      },
+    };
+  } catch (error) {
+    return error;
+  }
+}
 
-export default function Home() {
-  const [pokemon, setPokemon] = useState<Pokemon[]>([]);
-
-  useEffect(() => {
-    async function getPokemon() {
-      const res = await fetch(
-        "https://jherr-pokemon.s3.us-west-1.amazonaws.com/index.json"
-      );
-      setPokemon(await res.json());
-    }
-    getPokemon();
-  }, []);
+export default function Home({ pokemon }: { pokemon: Pokemon[] }) {
   return (
     <div className="mx-5">
       <Head>
